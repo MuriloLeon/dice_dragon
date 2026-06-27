@@ -9,7 +9,7 @@ body {
 
 :root {
   --tamanho-header: 80px;
-  --tamanho-banner: calc(100vh - var(--tamanho-header) - var(--tamanho-footer) - 2px);
+  --tamanho-banner: calc(90vh - var(--tamanho-header) - var(--tamanho-footer) - 2px);
   --tamanho-simulador: calc(100vh - var(--tamanho-header) - var(--tamanho-footer) - 2px);
   --tamanho-login: calc(100vh - var(--tamanho-header) - var(--tamanho-footer) - 2px);
   --tamanho-footer: 65px;
@@ -23,7 +23,8 @@ body {
 
 .header {
   height: var(--tamanho-header);
-  border-bottom: 2px solid #32b9cd;
+  background-color: #BD0927;
+  border-bottom: 4px solid #500A1F;
 }
 
 .header .container {
@@ -34,7 +35,7 @@ body {
 
 .header a {
   text-decoration: none;
-  color: #e3b062;
+  color: #ffffff;
 }
 
 .agora {
@@ -60,13 +61,27 @@ body {
   margin: 0;
 }
 
+.button_login {
+  background-color: #09D8C7;
+  border: 0;
+  width: 80px;
+  height: 30px;
+  color: #0D1A2F;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 6px 6px 0px #17364F;
+  cursor: pointer;
+}
+
 /* BANNER */
 
 .banner {
   height: var(--tamanho-banner);
   color: white;
-  background-image: url('../assets/imgs/bg-jelly-fish-para-home.png');
+  background-image: url('../assets/imgs/banner.png');
+  background-position: center;
   background-size: cover;
+  border-bottom: 4px solid #500A1F;
 }
 
 .banner .container {
@@ -89,7 +104,7 @@ body {
 /* MISSÃO VISÃO VALORES */
 
 .social {
-  background-color: #e5e5e5;
+  background-color: #0D1A2F;
   display: flex;
 }
 
@@ -103,7 +118,9 @@ body {
 
 .social .container .boxes {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
   width: 100%;
   padding: 30px 0;
 }
@@ -113,19 +130,30 @@ body {
 }
 
 .box {
+  width: 700px;
+  height: 400px;
   display: flex;
+  background-color: #BD0927;
+  border: 4px solid #17364F;
+  margin-top: 50px;
   flex-direction: column;
   align-items: center;
+  box-shadow: 8px 8px 0px #17364F;
+}
+
+.boxes {
+  position: relative;
 }
 
 /* FOOTER */
 
 .footer {
-  background-color: #32b9cd;
+  background-color: #BD0927;
   height: 150px;
   color: #fff;
   display: flex;
   font-size: 15px;
+  border-top: 4px solid #500A1F;
 }
 
 .footer .container {
@@ -152,16 +180,51 @@ body {
 }
 
 .card {
-  width: 50%;
-  background-color: #e5e5e5;
-  border-radius: 10px;
+  width: 500px;
+  background-color: #BD0927;
+  border: 4px solid #0D1A2F;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  color: palevioletred;
+  color: rgb(255, 255, 255);
   flex-direction: column;
   height: fit-content;
-  padding: 20px 0;
+  padding: 0;
+  position: fixed;
+  top: 18%;
+  left: 35%;
+  box-shadow: 8px 8px 0px #0D1A2F;
+}
+
+.card-login{
+  display: none;
+}
+
+.card-cadastro{
+  display: none;
+}
+
+.header_login{
+  margin-bottom: 35px;
+  border-bottom: 2px solid #0D1A2F;
+  height: 15%;
+}
+
+.footer_login, .header_login{
+  background-color: #17364F;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.footer_login{
+  height: 10%;
+  margin-top: 10px;
+  border-top: 2px solid #0D1A2F;
+}
+
+.footer_login p{
+  cursor: pointer;
 }
 
 .card h2 {
@@ -178,15 +241,17 @@ body {
 }
 
 .formulario span {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .formulario input {
-  border: 2px solid #32b9cd;
-  text-align: center;
-  border-radius: 10px;
+  border: 3px solid #411E3A;
+  text-align: left;
+  font-size: 15px;
   margin: 0;
+  border-radius: 0px;
 }
 
 .formulario select {
@@ -204,21 +269,34 @@ body {
   flex-direction: column;
   justify-content: start;
   padding: 5px 0;
+  margin-bottom: 20px;
 }
 
 .botao {
   cursor: pointer;
   font-family: "Barlow", sans-serif;
   border: 0;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 18px;
-  color: #fff;
-  background-color: #ED145B;
-  width: 120px;
-  height: 30px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #17364F;
+  background-color: #09D8C7;
+  width: 150px;
+  height: 40px;
   align-self: center;
-  margin-top: 20px;
+  margin-top: 30px;
+  box-shadow: 8px 8px 0px #17364F;
+}
+
+.fechar{
+  background-color: transparent;
+  border: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
 }
 
 .loading-div {

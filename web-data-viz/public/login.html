@@ -19,7 +19,7 @@
 
     <!--Header-->
 
-    <div class="header">
+    <!-- <div class="header">
         <div class="container">
             <h1 class="titulo">AquaTech</h1>
             <ul class="navbar">
@@ -38,28 +38,32 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> -->
 
 
-    <div class="login">
+    <!-- <div class="login">
         <div class="alerta_erro">
             <div class="card_erro" id="cardErro">
                 <span id="mensagem_erro"></span>
-            </div>
-        </div>
+            </div> -->
+        <!-- </div> -->
         <div class="container">
             <div class="card card-login">
-                <h2>Olá de volta!</h2>
+                <button class="fechar">X</button>
+                <div class="header_login">
+                    <h2>Acesse o Site</h2>
+                    <p>Faça seu login e acesse o site</p>
+                </div>
                 <div class="formulario">
                     <div class="campo">
                         <span>E-mail:</span>
-                        <input id="email_input" type="text" placeholder="Login">
+                        <input id="email_input" type="text">
                     </div>
                     <div class="campo">
                         <span>Senha:</span>
-                        <input id="senha_input" type="password" placeholder="******">
+                        <input id="senha_input" type="password">
+                        <button class="botao" onclick="entrar()">Entrar</button>
                     </div>
-                    <button class="botao" onclick="entrar()">Entrar</button>
                 </div>
 
                 <div id="div_aguardar" class="loading-div">
@@ -67,16 +71,19 @@
                 </div>
 
                 <div id="div_erros_login"></div>
+                <div class="footer_login">
+                    <p>Não possui uma conta? <i>Cadastre-se</i></p>
+                </div>
             </div>
         </div>
-    </div>
+    <!-- </div> -->
 
     <!--footer inicio-->
-    <div class="footer">
+    <!-- <div class="footer">
         <div class="container">
             <h4>Feito com amor por aluno &hearts; SPTech &copy; 2023-2026</h4>
         </div>
-    </div>
+    </div> -->
     <!--footer fim-->
 
 </body>
