@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaTech | Página Inicial</title>
+
+    <script src="./js/sessao.js"></script>
+
+    <link rel="stylesheet" href="./css/estilo.css">
+    <link rel="stylesheet" href="./css/sistema.css">
+    <link rel="icon" href="./assets/icon/favicon2.ico">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="titulo">AquaTech</h1>
+            <ul class="navbar">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li>
+                    <a href="personagens.html">Rolagem de Dados</a>
+                </li>
+                <li class="agora">
+                    <a href="dashboard.html">Dashboard</a>
+                </li>
+            </ul>
+            <button class="button_login" onclick="abrirLogin()">Login</button>
+        </div>
+    </div>
+    <div class="header_dash">
+        <h1>Histórico das Rolagens</h1>
+        <div class="kpis">
+            <div class="cardKpi">
+                <p>Quantidade de Rolagens</p>
+                <span id="span_qtdRolagens"></span>
+            </div>
+            <div class="cardKpi">
+                <p>Melhor resultado no dado em %</p>
+                <span id="span_porcentagem"></span>
+            </div>
+            <div class="cardKpi">
+                <p>Quantidade de críticos no d20</p>
+                <span id="span_qtdCriticos"></span>
+            </div>
+            <div class="cardKpi">
+                <p>Quantidade de erros críticos no d20</p>
+                <span id="span_qtdErros"></span>
+            </div>
+        </div>
+    </div>
+    <div class="graficos">
+    <div class="graficosMaisUsado">
+        <canvas id="maisUsado"></canvas>
+    </div>
+    <div class="graficoLinha">
+        <canvas id="ultimosResultados"></canvas>
+    </div>
+    </div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = function () {obterDados(); validarSessao()};
+
+    var rolagemTotal = 0;   
+    var porcentagemCriticos = 0;
+    var qtdCriticos = 0;
+    var qtdErroCriticos = 0;
+
+    let graficoMaisUsado = {
+        'd20': 0,
+        'd12': 0,
+        'd10': 0,
+        'd8': 0,
+        'd6': 0,
+        'd4': 0
+    };
+
+    let ultimas_rolagens = [];
+
+    function quantidadeRolagemTotal(){
+        fetch(`/dashboard/quantidadeRolagemTotal/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            rolagemTotal = json[0].qtdRolagem
+            console.log(rolagemTotal);
+            document.getElementById("span_qtdRolagens").innerHTML = `${rolagemTotal}`
+            console.log(rolagemTotal);
+
+            quantidadeCriticos();
+        });
+    }
+
+    function quantidadeCriticos(){
+        fetch(`/dashboard/quantidadeCriticos/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            qtdCriticos = json[0].qtdCriticos;
+            porcentagemCriticos = rolagemTotal * (qtdCriticos / 100)
+            document.getElementById("span_porcentagem").innerHTML = `${porcentagemCriticos.toFixed(2)}%`
+            document.getElementById("span_qtdCriticos").innerHTML = qtdCriticos
+        });
+    }
+
+    function quantidadeErrosCriticos(){
+        fetch(`/dashboard/quantidadeErrosCriticos/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            qtdErroCriticos = json[0].qtdErrosCriticos;
+            document.getElementById("span_qtdErros").innerHTML = qtdErroCriticos
+        });
+    }
+
+
+    async function obterDados(){
+        await Promise.all([
+            quantidadeRolagemTotal(),
+            quantidadeErrosCriticos()
+        ])
+
+        fetch(`/dashboard/dadoMaisUsado/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            for(let i=0; i < json.length; i++){
+                graficoMaisUsado[json[i].tipoDado] = json[i].quantidade
+            }
+            plotarGraficoMaisUsado()
+        });
+
+        fetch(`/dashboard/ultimosResultados/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            ultimas_rolagens = json
+            plotarGraficoUltimosResultados()
+        });
+    }
+
+    function plotarGraficoMaisUsado(){
+        const ctx = document.getElementById('maisUsado');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: ["d4", "d6", "d8", "d10", "d12", "d20"],
+            datasets: [{
+                label: '# of Votes',
+                data: [graficoMaisUsado.d4, graficoMaisUsado.d6, graficoMaisUsado.d8, graficoMaisUsado.d10, graficoMaisUsado.d12, graficoMaisUsado.d20],
+                borderWidth: 1,
+                backgroundColor: ['#427AA1', '#64F58D', '#8D80AD', '#D999B9', '#F05D23', '#FF1B1C']
+            }]
+            },
+            options: {
+            plugins:{
+                title: {
+                    display: true,
+                    text: "Dados Mais Utilizados",
+                    font: {
+                        size: 18,
+                        color: "#ffffff"
+                    }
+                }
+            },
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    }
+
+    function plotarGraficoUltimosResultados(){
+        const ctx = document.getElementById('ultimosResultados');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: [ultimas_rolagens[0].dtRolagem, ultimas_rolagens[1].dtRolagem, ultimas_rolagens[2].dtRolagem, ultimas_rolagens[3].dtRolagem, ultimas_rolagens[4].dtRolagem],
+            datasets: [{
+                label: '# of Votes',
+                data: [ultimas_rolagens[0].resultadoFinal, ultimas_rolagens[1].resultadoFinal, ultimas_rolagens[2].resultadoFinal, ultimas_rolagens[3].resultadoFinal, ultimas_rolagens[4].resultadoFinal],
+                borderWidth: 1,
+                backgroundColor: '#648767',
+                borderColor: "#4AAD52"
+            }]
+            },
+            options: {
+            plugins:{
+                title: {
+                    display: true,
+                    text: "Últimas Rolagens do d20",
+                    font: {
+                        size: 18,
+                        color: "#ffffff"
+                    }
+                }
+            },
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    }
+</script>

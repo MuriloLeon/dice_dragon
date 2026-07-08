@@ -7,6 +7,7 @@ comandos para mysql server
 */
 
 CREATE DATABASE dice_dragon;
+DROP DATABASE dice_dragon;
 
 USE dice_dragon;
 
@@ -24,24 +25,37 @@ CREATE TABLE personagem (
 	FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
 );
 
-create table aquario (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	descricao VARCHAR(300),
-	fk_empresa INT,
-	FOREIGN KEY (fk_empresa) REFERENCES empresa(id)
+create table rolagem_definida (
+	id INT AUTO_INCREMENT,
+    nome VARCHAR(45),
+    tipo VARCHAR(45),
+    fk_personagem int,
+    primary key(id, fk_personagem),
+    FOREIGN KEY (fk_personagem) REFERENCES personagem(id)
+);	
+drop table rolagem;
+create table rolagem (
+	id INT AUTO_INCREMENT,
+	categoria VARCHAR(45),
+    quantidade INT,
+	tipoDado VARCHAR(3),
+	bonus INT,
+    tipoRolagem VARCHAR(45),
+    fk_rolagem INT,
+    primary key(id, fk_rolagem),
+    foreign key (fk_rolagem) references rolagem_definida(id)
 );
 
-/* esta tabela deve estar de acordo com o que está em INSERT de sua API do arduino - dat-acqu-ino */
+SELECT r.categoria, r.quantidade, r.tipoDado, r.bonus, r.tipoRolagem FROM rolagem r
+JOIN rolagem_definida rd ON rd.id = r.fk_rolagem
+WHERE rd.fk_personagem = 1 AND r.fk_rolagem = 1;
 
-create table medida (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	temperatura DECIMAL,
-	momento DATETIME,
-	fk_aquario INT,
-	FOREIGN KEY (fk_aquario) REFERENCES aquario(id)
+create table resultados (
+	id INT PRIMARY KEY auto_increment,
+    resultadoDado INT,
+    resultadoFinal INT,
+    tipoDado VARCHAR(45),
+    dtRolagem datetime default current_timestamp,
+	fk_usuario INT,
+	FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
 );
-
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 1', 'ED145B');
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 2', 'A1B2C3');
-insert into aquario (descricao, fk_empresa) values ('Aquário de Estrela-do-mar', 1);
-insert into aquario (descricao, fk_empresa) values ('Aquário de Peixe-dourado', 2);

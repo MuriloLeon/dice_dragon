@@ -24,10 +24,10 @@
           <a href="#">Home</a>
         </li>
         <li>
-          <a href="simulador.html">Rolagem de Dados</a>
+          <a href="personagens.html">Rolagem de Dados</a>
         </li>
         <li>
-          <a href="login.html">Dashboard</a>
+          <a href="dashboard.html">Dashboard</a>
         </li>
       </ul>
       <button class="button_login" onclick="abrirLogin()">Login</button>
@@ -142,10 +142,8 @@
     </div>
   </div>
 </body>
-
 </html>
 <script>
-
   function abrirLogin() {
     cardLogin.style.display = "flex";
   }
@@ -207,7 +205,7 @@
           sessionStorage.ID_USUARIO = json.id;
 
           setTimeout(function () {
-            window.location = "./dashboard/cards.html";
+            window.location = "./personagens.html";
           }, 1000); // apenas para exibir o loading
 
         });

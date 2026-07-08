@@ -1,0 +1,417 @@
+.rolagem{
+  position: fixed;
+  top: 84px;
+  left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    background-color: #9F0620;
+    border-right: 4px solid #500A1F;
+    height: 100%;
+}
+
+.corpo{
+  display: flex;
+  flex-direction: row;
+}
+
+.rolagem p{
+    font-size: 25px;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.rolagem input{
+  border: 3px solid #411E3A;
+  text-align: center;
+  font-size: 20px;
+  margin: 15px 0 35px 0;
+  border-radius: 0px;
+  font-weight: 600;
+  width: 135px;
+  height: 20px;
+}
+
+.rolagem select{
+  border: 3px solid #411E3A;
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 15px 0 35px 0;
+  border-radius: 0px;
+  width: 160px;
+  height: 40px;
+}
+
+.rolagem button{
+  background-color: #09D8C7;
+  border: 0;
+  font-size: 20px;
+  font-weight: 700;
+  height: 30px;
+  width: 130px;
+  color: #0D1A2F;
+  box-shadow: 6px 6px 0px #17364F;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.area{
+  display: flex;
+  position: relative;
+  left: 404px;
+  width: 70%;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+}
+
+.area h1{
+  color: white;
+  margin-top: 50px;
+}
+
+.button{
+  background-color: #09D8C7;
+  border: 0;
+  color: #0D1A2F;
+  box-shadow: 6px 6px 0px #17364F;
+  cursor: pointer;
+}
+
+.adicionar{
+  font-weight: 600;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+}
+
+.area_cards{
+  margin-top: 100px;
+  display: flex;
+  justify-content: left;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-left: 200px;
+  gap: 100px;
+}
+
+.card_sistema{
+  display: flex;
+  background-color: #BD0927;
+  border: 4px solid #17364F;
+  flex-direction: column;
+  box-shadow: 8px 8px 0px #17364F;
+  color: white;
+}
+
+.personagem{
+  align-items: center;
+  width: 350px;
+  height: 125px;
+}
+.personagem p{
+  margin: 10px 0 15px 0;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.opcoes{
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.btn_perso{
+  width: 85px;
+  height: 22px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pop-up{
+  background-color: #701DD5;
+  border: 4px solid #0D1A2F;
+  flex-direction: column;
+  box-shadow: 8px 8px 0px #0D1A2F;
+  position: absolute;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 30%;
+  left: 40%;
+  display: none;
+}
+
+.resultado{
+  color: white;
+  width: 500px;
+}
+
+.resultado p{
+  font-weight: 700;
+  font-size: 25px;
+}
+
+.resultado span{
+  font-weight: 700;
+  font-size: 50px;
+}
+
+.resultado .rolagem_resultado{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.resultado .rolagem_resultado p{
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0;
+}
+
+.resultado .rolagem_resultado span{
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.resultado .detalhes{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.resultado .detalhes .dados_bonus{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.resultado .detalhes span{
+  font-weight: 700;
+  font-size: 25px;
+  color: #00FF33;
+}
+
+.resultado .detalhes p{
+  margin: 0;
+}
+
+.criar{
+  width: 400px;
+  padding: 20px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.criar p{
+  margin: 10px 0 10px 0;
+}
+
+.criar input{
+  border: 3px solid #411E3A;
+  text-align: left;
+  font-size: 20px;
+  margin: 0;
+  border-radius: 0px;
+}
+
+.criar select{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 100px;
+  height: 25px;
+  font-size: 18px;
+  border: 2px solid #411E3A;
+  text-align: center;
+}
+
+.formulario_criar{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.formulario_criar p{
+  font-size: 25px;
+}
+
+.campo_criar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  padding-bottom: 20px;
+  border-bottom: 2px solid white;
+}
+
+.input_criar{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input_criar p{
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.input_criar input{
+  width: 50px;
+  text-align: center;
+  height: 18px;
+}
+
+.input_criar select{
+  position: initial;
+  width: 60px;
+  text-align: center;
+  height: 43px;
+}
+
+.editar{
+  width: 300px;
+  height: 100px;
+  padding: 20px;
+}
+
+
+.editar input{
+  border: 3px solid #411E3A;
+  text-align: left;
+  font-size: 20px;
+  margin: 0;
+  border-radius: 0px;
+}
+
+.btn_editar{
+  width: 90px;
+  height: 30px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.dado_predefinido{
+  align-items: center;
+  width: 370px;
+  height: 180px;
+}
+
+.botoes_dados{
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0 0 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.botoes_dados .rolar_dado{
+  background-color: #60094F;
+  border: 2px solid #17364F;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+  padding: 5px 0px 14px 0;
+}
+
+.rolar_dado p{
+  font-size: 13px;
+  margin: 0;
+}
+
+.rolar_dado span{
+  font-size: 19px;
+  margin: 0 0 5px 0;
+}
+
+.header_card{
+  position: relative;
+  width: 100%;
+}
+
+.header_card span{
+  position: absolute;
+  top: 0;
+  right: 5px;
+}
+
+.header_card p{
+  font-size: 30px;
+  margin: 10px 0 5px 10px;
+}
+
+.header_dash{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  margin-top: 10px;
+}
+
+.kpis{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.cardKpi{
+  border: 4px solid #17364F;
+  box-shadow: 8px 8px 0px #17364F;
+  background-color: #A47DAB;
+  width: 325px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+}
+
+.cardKpi p{
+  font-size: 20px;
+  font-weight: 500;
+  margin: 5px 0 0;
+}
+
+.cardKpi span{
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.graficos{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 100px;
+}
+
+.graficosMaisUsado{
+  width: 45%;
+  margin: 0 50px;
+}
+
+.graficoLinha{
+  width: 45%;
+  margin: 0 50px;
+}

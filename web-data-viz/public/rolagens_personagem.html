@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaTech | Página Inicial</title>
+
+    <script src="./js/sessao.js"></script>
+
+    <link rel="stylesheet" href="./css/estilo.css">
+    <link rel="stylesheet" href="./css/sistema.css">
+    <link rel="icon" href="./assets/icon/favicon2.ico">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="titulo">AquaTech</h1>
+            <ul class="navbar">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="agora">
+                    <a href="personagens.html">Rolagem de Dados</a>
+                </li>
+                <li>
+                    <a href="dashboard.html">Dashboard</a>
+                </li>
+            </ul>
+            <button class="button_login" onclick="abrirLogin()">Login</button>
+        </div>
+    </div>
+<div class="corpo">
+    <div class="rolagem">
+            <p>Tipo de Dado:</p>
+            <select id="tipo_dado">
+                <option  value="d4">d4</option>
+                <option  value="d6">d6</option>
+                <option  value="d8">d8</option>
+                <option  value="d10">d10</option>
+                <option  value="d12">d12</option>
+                <option  value="d20">d20</option>
+            </select>
+            <p>Quantidade:</p>
+            <input type="text"  id="qtd_dados">
+            <p>Bônus:</p>
+            <input type="text"  id="ipt_bonus">
+            <p>Tipo de Rolagem:</p>
+            <select id="tipo_rolagem">
+                <option  value="Vantagem">Vantagem</option>
+                <option  value="Desvantagem">Desvantagem</option>
+                <option  value="Soma">Soma</option>
+            </select>
+            <button onclick="pegarValoresInput()">Rolar Dados</button>
+            <p>Último Resultado:</p>
+            <p id="ultimo_resultado"></p>
+            <p id="ultima_rolagem"></p>
+    </div>
+    <div class="area">
+            <h1>Rolagens Pré-definidas</h1>
+            <button class="button adicionar" onclick="abrirPopUpCriar()">Adicionar Grupo</button>
+        <div class="area_cards" id="div_area_cards">
+        </div>
+    </div>
+</div>
+
+<div class="pop-up resultado" id="resultado_rolagem">
+    <button class="fechar" onclick="fechar()">X</button>
+    <p>Resultado da Rolagem</p>
+    <span id="span_resultado"></span>
+    <div class="rolagem_resultado">
+        <p>Rolagem:</p>
+        <span id="span_rolagem"></span>
+    </div>
+    <div class="detalhes">
+        <div class="dados_bonus">
+            <p>Dados</p>
+            <p id="p_dados"></p>
+        </div>
+        <p>+</p>
+        <div class="dados_bonus">
+            <p>Bônus</p>
+            <p id="p_bonus"></p>
+        </div>
+    </div>
+</div>
+
+<div class="pop-up criar" id="popupCriar">
+    <p>Nome:</p>
+    <input type="text" id="nome_criar">
+    <select onclick="alterarFormulario()" id="tipo_rolagem_criar">
+        <option value="Ataque">Ataque</option>
+        <option value="Magia">Magia</option>
+        <option value="Habilidade">Habilidade</option>
+    </select>
+    <div class="formulario_criar" id="formulario">
+        <p>Dano Base</p>
+        <div class="campo_criar">
+            <div class="input_criar">
+                <p>Quantidade</p>
+                <input type="text" id="ipt_qtdDano">
+            </div>
+            <div class="input_criar">
+                <p>Dado</p>
+                <select id="ipt_tipoDadoDano">
+                <option  value="d4">d4</option>
+                <option  value="d6">d6</option>
+                <option  value="d8">d8</option>
+                <option  value="d10">d10</option>
+                <option  value="d12">d12</option>
+                <option  value="d20">d20</option>
+            </select>
+            </div>
+            <div class="input_criar">
+                <p>Bônus</p>
+                <input type="text" id="ipt_bonusDano">
+            </div>
+        </div>
+        <div class="opcoes">
+            <button class="button btn_editar" onclick="criarHabilidade()">Criar</button>
+            <button class="button btn_editar" onclick="fechar()">Cancelar</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="rolagemDados.js"></script>
+<script>
+    window.onload = verRolagemPersonagem, validarSessao();
+
+    let rolagemEditar = 0;
+
+    function fechar(){
+        resultado_rolagem.style.display = 'none';
+        popupCriar.style.display = 'none';
+    }
+
+    function adicionarGrupo(){
+        popupCriar.style.display = 'flex'
+    }
+
+    var rolagensPersonagem = [];
+
+    // VISUALIZAÇÃO DAS ROLAGENS
+    function verRolagemPersonagem() {
+        fetch(`/rolagens/verRolagemPersonagem/${sessionStorage.ID_PERSONAGEM_ATUAL}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            console.log(json)
+            rolagensPersonagem = json;
+            console.log(rolagensPersonagem)
+            verRolagem();
+        });
+    }
+    
+    function verRolagem(){
+        if(rolagensPersonagem.length > 0){
+            for(let i = 0; i< rolagensPersonagem.length; i++){
+                fetch(`/rolagens/verRolagem/${sessionStorage.ID_PERSONAGEM_ATUAL}/${rolagensPersonagem[i].id}`, {
+                    method: "GET"
+                })
+                .then(resposta => resposta.json())
+                .then(json => {
+                    console.log(rolagensPersonagem)
+                    rolagensPersonagem[i].rolagens = json;
+                    exibirPersonagens();
+                });
+            }
+        } else{
+            exibirPersonagens();
+        }
+    }
+    
+    function exibirPersonagens() {
+        div_area_cards.innerHTML = '';
+        console.log(rolagensPersonagem);
+        rolagensPersonagem.forEach(item => {    
+            document.getElementById("div_area_cards").innerHTML += `
+            <div class="card_sistema dado_predefinido">
+                <div class="header_card">
+                    <p>${item.nome}</p>
+                    <span>${item.tipo}</span>
+                </div>
+                <div class="opcoes">
+                    <button class="button btn_perso" onclick="excluirRolagem(${item.id})">Excluir</button>
+                </div>
+                <div class="botoes_dados" id="botoes_dados${item.id}">
+                </div>
+            </div>`;
+
+            item.rolagens.forEach(item2 => {
+                document.getElementById(`botoes_dados${item.id}`).innerHTML += `
+                <div class="rolar_dado" onclick="rolarDados(${item2.quantidade}, '${item2.tipoDado}', '${item2.tipoRolagem}', ${item2.bonus})">
+                    <p>${item2.categoria}</p>
+                    <p><span>${item2.quantidade}${item2.tipoDado}+${item2.bonus}</span></p>
+                </div>
+                `;
+            });
+        });
+    }
+
+    // CRIAÇÃO DAS ROLAGENS
+
+    function abrirPopUpCriar(){
+        popupCriar.style.display = 'flex';
+        alterarFormulario();
+    };
+
+    function alterarFormulario(){
+        if(tipo_rolagem_criar.value == 'Ataque'){
+            formulario.innerHTML = `
+                <p>Ataque</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdAtaque">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoAtaque">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusAtaque">
+                    </div>
+                </div>
+                <p>Dano</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdDano">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoDano">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusDano">
+                    </div>
+                </div>
+                <p>Critico</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdCritico">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoCritico">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusCritico">
+                    </div>
+                </div>
+                <div class="opcoes">
+                    <button class="button btn_editar" onclick="criarRolagemDefinida()">Criar</button>
+                    <button class="button btn_editar" onclick="fechar()">Cancelar</button>
+                </div>
+            `;
+            ipt_qtdAtaque.value = '';
+            ipt_bonusAtaque.value = '';
+            ipt_qtdDano.value = '';
+            ipt_bonusDano.value = '';
+            ipt_qtdCritico.value = '';
+            ipt_bonusCritico.value = '';
+        } else if(tipo_rolagem_criar.value == 'Magia'){
+            formulario.innerHTML = `
+                <p>Dano Base</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdDano">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoDano">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusDano">
+                    </div>
+                </div>
+                <p>Em níveis superiores</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdNiveis">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoNiveis">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusNiveis">
+                    </div>
+                </div>
+                <div class="opcoes">
+                    <button class="button btn_editar" onclick="criarRolagemDefinida()">Criar</button>
+                    <button class="button btn_editar" onclick="fechar()">Cancelar</button>
+                </div>
+            `;
+            ipt_qtdDano.value = '';
+            ipt_bonusDano.value = '';
+            ipt_qtdNiveis.value = '';
+            ipt_bonusNiveis.value = '';
+        } else if(tipo_rolagem_criar.value == 'Habilidade'){
+            formulario.innerHTML = `
+                <p>Dano</p>
+                <div class="campo_criar">
+                    <div class="input_criar">
+                        <p>Quantidade</p>
+                        <input type="text" id="ipt_qtdDano">
+                    </div>
+                    <div class="input_criar">
+                        <p>Dado</p>
+                        <select id="ipt_tipoDadoDano">
+                        <option  value="d4">d4</option>
+                        <option  value="d6">d6</option>
+                        <option  value="d8">d8</option>
+                        <option  value="d10">d10</option>
+                        <option  value="d12">d12</option>
+                        <option  value="d20">d20</option>
+                    </select>
+                    </div>
+                    <div class="input_criar">
+                        <p>Bônus</p>
+                        <input type="text" id="ipt_bonusDano">
+                    </div>
+                </div>
+                <div class="opcoes">
+                    <button class="button btn_editar" onclick="criarRolagemDefinida()">Criar</button>
+                    <button class="button btn_editar" onclick="fechar()">Cancelar</button>
+                </div>
+            `;
+            ipt_qtdDano.value = '';
+            ipt_bonusDano.value = '';
+        }
+    }
+
+    function criarRolagemDefinida(){
+        let nome = nome_criar.value;
+        let tipoRolagem = tipo_rolagem_criar.value;
+        console.log('criarRolagemDefinida')
+         fetch(`/rolagens/criarRolagemDefinida`, {
+            method: "POST",
+             headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idPersonagem: sessionStorage.ID_PERSONAGEM_ATUAL,
+            nome: nome,
+            tipoRolagem: tipoRolagem
+          })
+        }).then(resposta => resposta.json())
+        .then(json => {
+            sessionStorage.ID_ROLAGEM_CRIADA = json.idRolagemCriada;
+            nome_criar.value = ''
+            if(tipoRolagem == 'Ataque'){
+                criarAtaque();
+            } else if(tipoRolagem == 'Magia'){
+                criarMagia();
+            } else{
+                criarHabilidade();
+            }
+           
+        });
+    }
+
+    function criarAtaque(){
+        console.log('criarAtaque')
+        let qtdAtaque = Number(ipt_qtdAtaque.value);
+        let tipoDadoAtaque = ipt_tipoDadoAtaque.value;
+        let bonusAtaque = Number(ipt_bonusAtaque.value);
+        let qtdDano = Number(ipt_qtdDano.value);
+        let tipoDadoDano = ipt_tipoDadoDano.value;
+        let bonusDano = Number(ipt_bonusDano.value);
+        let qtdCritico = Number(ipt_qtdCritico.value);
+        let tipoDadoCritico = ipt_tipoDadoCritico.value;
+        let bonusCritico = Number(ipt_bonusCritico.value);
+        console.log(sessionStorage.ID_ROLAGEM_CRIADA)
+
+        fetch(`/rolagens/criarAtaque`, {
+            method: "POST",
+             headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idRolagem: Number(sessionStorage.ID_ROLAGEM_CRIADA),
+            qtdAtaque: qtdAtaque,
+            tipoDadoAtaque: tipoDadoAtaque,
+            bonusAtaque: bonusAtaque,
+            qtdDano: qtdDano,
+            tipoDadoDano: tipoDadoDano,
+            bonusDano: bonusDano,
+            qtdCritico: qtdCritico,
+            tipoDadoCritico: tipoDadoCritico,
+            bonusCritico: bonusCritico
+          })
+        }).then(resposta => {
+            if(resposta.ok){
+                console.log("Grupo adicionado com sucesso")
+                fechar()
+                verRolagemPersonagem();
+            }
+        })
+    }
+
+    function criarMagia(){
+        let qtdDano = Number(ipt_qtdDano.value);
+        let tipoDadoDano = ipt_tipoDadoDano.value;
+        let bonusDano = Number(ipt_bonusDano.value);
+        let qtdNiveis = Number(ipt_qtdNiveis.value);
+        let tipoDadoNiveis = ipt_tipoDadoNiveis.value;
+        let bonusNiveis = Number(ipt_bonusNiveis.value);
+
+        fetch(`/rolagens/criarMagia`, {
+            method: "POST",
+             headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idRolagem: sessionStorage.ID_ROLAGEM_CRIADA,
+            qtdDano: qtdDano,
+            tipoDadoDano: tipoDadoDano,
+            bonusDano: bonusDano,
+            qtdNiveis: qtdNiveis,
+            tipoDadoNiveis: tipoDadoNiveis,
+            bonusNiveis: bonusNiveis
+          })
+        }).then(resposta => {
+            if(resposta.ok){
+                console.log("Grupo adicionado com sucesso")
+                fechar()
+                verRolagemPersonagem();
+            }
+        })
+    }
+    function criarHabilidade(){
+        let qtdDano = Number(ipt_qtdDano.value);
+        let tipoDadoDano = ipt_tipoDadoDano.value;
+        let bonusDano = Number(ipt_bonusDano.value);
+
+        fetch(`/rolagens/criarHabilidade`, {
+            method: "POST",
+             headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idRolagem: sessionStorage.ID_ROLAGEM_CRIADA,
+            qtdDano: qtdDano,
+            tipoDadoDano: tipoDadoDano,
+            bonusDano: bonusDano
+          })
+        }).then(resposta => {
+            if(resposta.ok){
+                console.log("Grupo adicionado com sucesso")
+                fechar()
+                verRolagemPersonagem();
+            }
+        })
+    }
+
+    // Excluir
+    function excluirRolagem(idRolagem){
+        fetch(`/rolagens/excluirRolagem/${idRolagem}`, {
+            method: "DELETE"
+        })
+        .then(resposta => {
+            if(resposta.ok){
+                console.log("Personagem excluido com sucesso!")
+                excluirRolagemPersonagem(idRolagem)
+            }  
+        })
+    }
+
+    function excluirRolagemPersonagem(idRolagem){
+        fetch(`/rolagens/excluirRolagemPersonagem/${sessionStorage.ID_PERSONAGEM_ATUAL}/${idRolagem}`, {
+            method: "DELETE"
+        })
+        .then(resposta => {
+            if(resposta.ok){
+                console.log("Personagem excluido com sucesso!")
+                verRolagemPersonagem()
+            }  
+        })
+    }
+
+</script>

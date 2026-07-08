@@ -8,6 +8,7 @@
     <script src="./js/sessao.js"></script>
 
     <link rel="stylesheet" href="./css/estilo.css">
+    <link rel="stylesheet" href="./css/sistema.css">
     <link rel="icon" href="./assets/icon/favicon2.ico">
     <link rel="preconnect" href="https://fonts.gstatic.com">
 </head>
@@ -16,18 +17,205 @@
         <div class="container">
             <h1 class="titulo">AquaTech</h1>
             <ul class="navbar">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
                 <li class="agora">
-                    <a href="#">Home</a>
+                    <a href="personagens.html">Rolagem de Dados</a>
                 </li>
                 <li>
-                    <a href="simulador.html">Rolagem de Dados</a>
-                </li>
-                <li>
-                    <a href="login.html">Dashboard</a>
+                    <a href="dashboard.html">Dashboard</a>
                 </li>
             </ul>
             <button class="button_login" onclick="abrirLogin()">Login</button>
         </div>
     </div>
+<div class="corpo">
+    <div class="rolagem">
+            <p>Tipo de Dado:</p>
+            <select id="tipo_dado">
+                <option  value="d4">d4</option>
+                <option  value="d6">d6</option>
+                <option  value="d8">d8</option>
+                <option  value="d10">d10</option>
+                <option  value="d12">d12</option>
+                <option  value="d20">d20</option>
+            </select>
+            <p>Quantidade:</p>
+            <input type="text"  id="qtd_dados">
+            <p>Bônus:</p>
+            <input type="text"  id="ipt_bonus">
+            <p>Tipo de Rolagem:</p>
+            <select id="tipo_rolagem">
+                <option  value="Vantagem">Vantagem</option>
+                <option  value="Desvantagem">Desvantagem</option>
+                <option  value="Soma">Soma</option>
+            </select>
+            <button onclick="pegarValoresInput()">Rolar Dados</button>
+            <p>Último Resultado:</p>
+            <p id="ultimo_resultado"></p>
+            <p id="ultima_rolagem"></p>
+    </div>
+    <div class="area">
+            <h1>Rolagens Pré-definidas</h1>
+            <button class="button adicionar" onclick="adicionarGrupo()">Adicionar Grupo</button>
+        <div class="area_cards" id="div_area_cards">
+        </div>
+    </div>
+</div>
+
+<div class="pop-up resultado" id="resultado_rolagem">
+    <button class="fechar" onclick="fechar()">X</button>
+    <p>Resultado da Rolagem</p>
+    <span id="span_resultado"></span>
+    <div class="rolagem_resultado">
+        <p>Rolagem:</p>
+        <span id="span_rolagem"></span>
+    </div>
+    <div class="detalhes">
+        <div class="dados_bonus">
+            <p>Dados</p>
+            <p id="p_dados"></p>
+        </div>
+        <p>+</p>
+        <div class="dados_bonus">
+            <p>Bônus</p>
+            <p id="p_bonus"></p>
+        </div>
+    </div>
+</div>
+
+<div class="pop-up editar" id="popupEditar">
+    <input type="text" id="editar">
+    <div class="opcoes">
+        <button class="button btn_editar" onclick="salvar_grupo()">Salvar</button>
+        <button class="button btn_editar" onclick="fechar()">Cancelar</button>
+    </div>
+</div>
+
 </body>
 </html>
+<script src="rolagemDados.js"></script>
+<script>
+    window.onload = verPersonagem, validarSessao();
+    var personagemEditar = 0;   
+
+    function verPersonagem() {
+        fetch(`/rolagens/verPersonagem/${sessionStorage.ID_USUARIO}`, {
+            method: "GET"
+        })
+        .then(resposta => resposta.json())
+        .then(json => {
+            console.log(JSON.stringify(json))
+            sessionStorage.PERSONAGENS = JSON.stringify(json);
+            exibirPersonagens();
+        });
+    }
+    
+    function exibirPersonagens() {
+        div_area_cards.innerHTML = '';
+        JSON.parse(sessionStorage.PERSONAGENS).forEach(item => {
+            document.getElementById("div_area_cards").innerHTML += `
+                <div class="card_sistema personagem">
+                <p>${item.nome}</p>
+                <div class="opcoes">
+                    <button class="button btn_perso" onclick='acessarPersonagem(${item.id})'>Acessar</button>
+                    <button class="button btn_perso" onclick='editarPersonagem(${item.id})'>Editar</button>
+                    <button class="button btn_perso" onclick='excluirPersonagemRolagem(${item.id})'>Excluir</button>
+                </div>
+            </div>`
+        });
+    }
+
+    function adicionarGrupo(){
+        fetch(`/rolagens/adicionarGrupo`, {
+            method: "POST",
+             headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idUsuario: sessionStorage.ID_USUARIO
+          })
+        }).then(resposta => {
+            if(resposta.ok){
+                console.log("Grupo adicionado com sucesso")
+                verPersonagem()
+            }
+        })
+    }    
+
+    function editarPersonagem(idPersonagem){
+        popupEditar.style.display = 'flex';
+        personagemEditar = idPersonagem;
+    }
+
+    function salvar_grupo(){
+        let nomePersonagem = editar.value;
+
+        fetch(`/rolagens/alterarGrupo`, {
+            method: "PUT",
+            headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            idUsuario: sessionStorage.ID_USUARIO,
+            idPersonagem: personagemEditar,
+            nome: nomePersonagem
+          })
+        }).then(resposta => {
+            if(resposta.ok){
+                console.log("Nome alterado com sucesso!")
+                verPersonagem()
+                fechar()
+            }
+        })
+    }
+
+    function excluirRolagemDefinida(idPersonagem){
+        fetch(`/rolagens/excluirRolagemDefinida/${idPersonagem}`, {
+            method: "DELETE"
+        })
+        .then(resposta => {
+            if(resposta.ok){
+                console.log("Personagem excluido com sucesso!")
+                excluirPersonagem(idPersonagem)
+            }  
+        })
+    }
+
+    function excluirPersonagemRolagem(idPersonagem){
+        fetch(`/rolagens/excluirPersonagemRolagem/${idPersonagem}`, {
+            method: "DELETE"
+        })
+        .then(resposta => {
+            if(resposta.ok){
+                console.log("Personagem excluido com sucesso!")
+                excluirRolagemDefinida(idPersonagem)
+            }  
+        })
+    }
+
+    function excluirPersonagem(idPersonagem){
+        fetch(`/rolagens/excluirPersonagem/${sessionStorage.ID_USUARIO}/${idPersonagem}`, {
+            method: "DELETE"
+        })
+        .then(resposta => {
+            if(resposta.ok){
+                console.log("Personagem excluido com sucesso!")
+                verPersonagem()
+            }  
+        })
+    }
+
+    function acessarPersonagem(idPersonagem){
+        sessionStorage.ID_PERSONAGEM_ATUAL = idPersonagem;
+        window.location.href='rolagens_personagem.html';
+    }
+
+    function fechar(){
+        editar.value = '';
+        popupEditar.style.display = 'none';
+        resultado_rolagem.style.display = 'none';
+    }
+
+</script>
