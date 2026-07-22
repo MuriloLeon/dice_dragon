@@ -15,7 +15,7 @@
 <body>
     <div class="header">
         <div class="container">
-            <h1 class="titulo">AquaTech</h1>
+            <h1 class="titulo">Dice Dragons</h1>
             <ul class="navbar">
                 <li>
                     <a href="index.html">Home</a>
@@ -27,7 +27,7 @@
                     <a href="dashboard.html">Dashboard</a>
                 </li>
             </ul>
-            <button class="button_login" onclick="abrirLogin()">Login</button>
+            <button class="button_login" onclick="abrirLogin()" id="login">Login</button>
         </div>
     </div>
 <div class="corpo">
@@ -58,7 +58,7 @@
     </div>
     <div class="area">
             <h1>Rolagens Pré-definidas</h1>
-            <button class="button adicionar" onclick="abrirPopUpCriar()">Adicionar Grupo</button>
+            <button class="button adicionar" onclick="abrirPopUpCriar()">Adicionar Rolagem</button>
         <div class="area_cards" id="div_area_cards">
         </div>
     </div>
@@ -85,7 +85,7 @@
     </div>
 </div>
 
-<div class="pop-up criar" id="popupCriar">
+<div class="pop-upB criar" id="popupCriar">
     <p>Nome:</p>
     <input type="text" id="nome_criar">
     <select onclick="alterarFormulario()" id="tipo_rolagem_criar">
@@ -124,9 +124,226 @@
 </div>
 </body>
 </html>
+  <div class="card card-login" id="cardLogin">
+    <button class="fechar" onclick="fecharLogin()">X</button>
+    <div class="header_login">
+      <h2>Acesse o Site</h2>
+      <p>Faça seu login e acesse o site</p>
+    </div>
+    <div class="formulario">
+      <div class="campo">
+        <span>E-mail:</span>
+        <input id="email_input_login" type="text">
+      </div>
+      <div class="campo">
+        <span>Senha:</span>
+        <input id="senha_input_login" type="password">
+        <button class="botao" onclick="entrar()">Entrar</button>
+      </div>
+    </div>
+    <div id="div_aguardar" class="loading-div">
+      <img src="./assets/circle-loading.gif" id="loading-gif">
+    </div>
+    <div id="div_erros_login"></div>
+    <div class="footer_login">
+      <p onclick="irCadastrar()">Não possui uma conta? <i>Cadastre-se</i></p>
+    </div>
+  </div>
+
+  <div class="card card-cadastro" id="cardCadastrar">
+    <button class="fechar" onclick="fecharLogin()">X</button>
+    <div class="header_login">
+      <h2>Seja Bem-Vindo</h2>
+      <p>Faça seu cadastro e acesse o site</p>
+    </div>
+    <div class="formulario">
+      <div class="campo">
+        <span>Nome:</span>
+        <input id="nome_input" type="text" />
+      </div>
+      <div class="campo">
+        <span>E-mail:</span>
+        <input id="email_input" type="text" />
+      </div>
+      <div class="campo">
+        <span>Senha:</span>
+        <input id="senha_input" type="password" />
+      </div>
+      <div class="campo">
+        <span>Confirmação da Senha:</span>
+        <input id="confirmacao_senha_input" type="password" />
+        <button class="botao" onclick="cadastrar()">Cadastrar</button>
+      </div>
+    </div>
+    <div id="div_aguardar" class="loading-div">
+      <img src="./assets/circle-loading.gif" id="loading-gif" />
+    </div>
+
+    <div id="div_erros_login"></div>
+    <div class="footer_login">
+      <p onclick="irLogin()">Já possui uma conta? <i>Entrar</i></p>
+    </div>
+  </div>
 <script src="rolagemDados.js"></script>
 <script>
     window.onload = verRolagemPersonagem, validarSessao();
+
+     function abrirLogin() {
+    cardLogin.style.display = "flex";
+  }
+
+  function fecharLogin() {
+    cardLogin.style.display = 'none';
+    cardCadastrar.style.display = 'none';
+  }
+
+  function irCadastrar() {
+    cardLogin.style.display = 'none';
+    cardCadastrar.style.display = 'flex';
+  }
+
+  function irLogin() {
+    cardLogin.style.display = 'flex';
+    cardCadastrar.style.display = 'none';
+  }
+
+  function entrar() {
+    aguardar();
+
+    var emailVar = email_input_login.value;
+    var senhaVar = senha_input_login.value;
+
+    if (emailVar == "" || senhaVar == "") {
+      cardErro.style.display = "block"
+      mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+      finalizarAguardar();
+      return false;
+    }
+    else {
+      setInterval(sumirMensagem, 5000)
+    }
+
+    console.log("FORM LOGIN: ", emailVar);
+    console.log("FORM SENHA: ", senhaVar);
+
+    fetch("/usuarios/autenticar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        emailServer: emailVar,
+        senhaServer: senhaVar
+      })
+    }).then(function (resposta) {
+      console.log("ESTOU NO THEN DO entrar()!")
+
+      if (resposta.ok) {
+        console.log(resposta);
+
+        resposta.json().then(json => {
+          console.log(json);
+          console.log(JSON.stringify(json));
+          sessionStorage.EMAIL_USUARIO = json.email;
+          sessionStorage.NOME_USUARIO = json.nome;
+          sessionStorage.ID_USUARIO = json.id;
+
+          setTimeout(function () {
+            window.location = "./personagens.html";
+          }, 1000); // apenas para exibir o loading
+
+        });
+
+      } else {
+
+        console.log("Houve um erro ao tentar realizar o login!");
+
+        resposta.text().then(texto => {
+          console.error(texto);
+          finalizarAguardar(texto);
+        });
+      }
+
+    }).catch(function (erro) {
+      console.log(erro);
+    })
+
+    return false;
+  }
+
+  function sumirMensagem() {
+    cardErro.style.display = "none"
+  }
+
+
+
+  function cadastrar() {
+    // aguardar();
+
+    //Recupere o valor da nova input pelo nome do id
+    // Agora vá para o método fetch logo abaixo
+    var nomeVar = nome_input.value;
+    var emailVar = email_input.value;
+    var senhaVar = senha_input.value;
+    var confirmacaoSenhaVar = confirmacao_senha_input.value;
+
+    // Verificando se há algum campo em branco
+    if (
+      nomeVar == "" ||
+      emailVar == "" ||
+      senhaVar == "" ||
+      confirmacaoSenhaVar == ""
+    ) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "(Mensagem de erro para todos os campos em branco)";
+
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    // Enviando o valor da nova input
+    fetch("/usuarios/cadastrar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // crie um atributo que recebe o valor recuperado aqui
+        // Agora vá para o arquivo routes/usuario.js
+        nomeServer: nomeVar,
+        emailServer: emailVar,
+        senhaServer: senhaVar
+      }),
+    })
+      .then(function (resposta) {
+        console.log("resposta: ", resposta);
+
+        if (resposta.ok) {
+          cardErro.style.display = "block";
+
+          mensagem_erro.innerHTML =
+            "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+
+          setTimeout(() => {
+            irLogin();
+          }, "2000");
+
+          limparFormulario();
+          finalizarAguardar();
+        } else {
+          throw "Houve um erro ao tentar realizar o cadastro!";
+        }
+      })
+      .catch(function (resposta) {
+        console.log(`#ERRO: ${resposta}`);
+        finalizarAguardar();
+      });
+
+    return false;
+  }
 
     let rolagemEditar = 0;
 

@@ -34,7 +34,7 @@ function dadoMaisUsado(idUsuario) {
 
 function ultimosResultados(idUsuario) {
 
-    var instrucaoSql = `select resultadoFinal, dtRolagem from resultados where fk_usuario = ${idUsuario} and tipoDado = 'd20' order by dtRolagem limit 5;`;
+    var instrucaoSql = `select resultadoFinal, dtRolagem from resultados where fk_usuario = ${idUsuario} and tipoDado = 'd20' and tipoRolagem in ('Vantagem', 'Desvantagem') order by dtRolagem desc limit 5;`;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);

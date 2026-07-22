@@ -27,7 +27,7 @@
                     <a href="dashboard.html">Dashboard</a>
                 </li>
             </ul>
-            <button class="button_login" onclick="abrirLogin()">Login</button>
+            <button class="button_login" onclick="abrirLogin()" id="login">Login</button>
         </div>
     </div>
     <div class="header_dash">
@@ -59,11 +59,228 @@
         <canvas id="ultimosResultados"></canvas>
     </div>
     </div>
+      <div class="card card-login" id="cardLogin">
+    <button class="fechar" onclick="fecharLogin()">X</button>
+    <div class="header_login">
+      <h2>Acesse o Site</h2>
+      <p>Faça seu login e acesse o site</p>
+    </div>
+    <div class="formulario">
+      <div class="campo">
+        <span>E-mail:</span>
+        <input id="email_input_login" type="text">
+      </div>
+      <div class="campo">
+        <span>Senha:</span>
+        <input id="senha_input_login" type="password">
+        <button class="botao" onclick="entrar()">Entrar</button>
+      </div>
+    </div>
+    <div id="div_aguardar" class="loading-div">
+      <img src="./assets/circle-loading.gif" id="loading-gif">
+    </div>
+    <div id="div_erros_login"></div>
+    <div class="footer_login">
+      <p onclick="irCadastrar()">Não possui uma conta? <i>Cadastre-se</i></p>
+    </div>
+  </div>
+
+  <div class="card card-cadastro" id="cardCadastrar">
+    <button class="fechar" onclick="fecharLogin()">X</button>
+    <div class="header_login">
+      <h2>Seja Bem-Vindo</h2>
+      <p>Faça seu cadastro e acesse o site</p>
+    </div>
+    <div class="formulario">
+      <div class="campo">
+        <span>Nome:</span>
+        <input id="nome_input" type="text" />
+      </div>
+      <div class="campo">
+        <span>E-mail:</span>
+        <input id="email_input" type="text" />
+      </div>
+      <div class="campo">
+        <span>Senha:</span>
+        <input id="senha_input" type="password" />
+      </div>
+      <div class="campo">
+        <span>Confirmação da Senha:</span>
+        <input id="confirmacao_senha_input" type="password" />
+        <button class="botao" onclick="cadastrar()">Cadastrar</button>
+      </div>
+    </div>
+    <div id="div_aguardar" class="loading-div">
+      <img src="./assets/circle-loading.gif" id="loading-gif" />
+    </div>
+
+    <div id="div_erros_login"></div>
+    <div class="footer_login">
+      <p onclick="irLogin()">Já possui uma conta? <i>Entrar</i></p>
+    </div>
+  </div>
 </body>
 </html>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     window.onload = function () {obterDados(); validarSessao()};
+
+     function abrirLogin() {
+    cardLogin.style.display = "flex";
+  }
+
+  function fecharLogin() {
+    cardLogin.style.display = 'none';
+    cardCadastrar.style.display = 'none';
+  }
+
+  function irCadastrar() {
+    cardLogin.style.display = 'none';
+    cardCadastrar.style.display = 'flex';
+  }
+
+  function irLogin() {
+    cardLogin.style.display = 'flex';
+    cardCadastrar.style.display = 'none';
+  }
+
+  function entrar() {
+    aguardar();
+
+    var emailVar = email_input_login.value;
+    var senhaVar = senha_input_login.value;
+
+    if (emailVar == "" || senhaVar == "") {
+      cardErro.style.display = "block"
+      mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+      finalizarAguardar();
+      return false;
+    }
+    else {
+      setInterval(sumirMensagem, 5000)
+    }
+
+    console.log("FORM LOGIN: ", emailVar);
+    console.log("FORM SENHA: ", senhaVar);
+
+    fetch("/usuarios/autenticar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        emailServer: emailVar,
+        senhaServer: senhaVar
+      })
+    }).then(function (resposta) {
+      console.log("ESTOU NO THEN DO entrar()!")
+
+      if (resposta.ok) {
+        console.log(resposta);
+
+        resposta.json().then(json => {
+          console.log(json);
+          console.log(JSON.stringify(json));
+          sessionStorage.EMAIL_USUARIO = json.email;
+          sessionStorage.NOME_USUARIO = json.nome;
+          sessionStorage.ID_USUARIO = json.id;
+
+          setTimeout(function () {
+            window.location = "./personagens.html";
+          }, 1000); // apenas para exibir o loading
+
+        });
+
+      } else {
+
+        console.log("Houve um erro ao tentar realizar o login!");
+
+        resposta.text().then(texto => {
+          console.error(texto);
+          finalizarAguardar(texto);
+        });
+      }
+
+    }).catch(function (erro) {
+      console.log(erro);
+    })
+
+    return false;
+  }
+
+  function sumirMensagem() {
+    cardErro.style.display = "none"
+  }
+
+
+
+  function cadastrar() {
+    // aguardar();
+
+    //Recupere o valor da nova input pelo nome do id
+    // Agora vá para o método fetch logo abaixo
+    var nomeVar = nome_input.value;
+    var emailVar = email_input.value;
+    var senhaVar = senha_input.value;
+    var confirmacaoSenhaVar = confirmacao_senha_input.value;
+
+    // Verificando se há algum campo em branco
+    if (
+      nomeVar == "" ||
+      emailVar == "" ||
+      senhaVar == "" ||
+      confirmacaoSenhaVar == ""
+    ) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "(Mensagem de erro para todos os campos em branco)";
+
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    // Enviando o valor da nova input
+    fetch("/usuarios/cadastrar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // crie um atributo que recebe o valor recuperado aqui
+        // Agora vá para o arquivo routes/usuario.js
+        nomeServer: nomeVar,
+        emailServer: emailVar,
+        senhaServer: senhaVar
+      }),
+    })
+      .then(function (resposta) {
+        console.log("resposta: ", resposta);
+
+        if (resposta.ok) {
+          cardErro.style.display = "block";
+
+          mensagem_erro.innerHTML =
+            "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+
+          setTimeout(() => {
+            irLogin();
+          }, "2000");
+
+          limparFormulario();
+          finalizarAguardar();
+        } else {
+          throw "Houve um erro ao tentar realizar o cadastro!";
+        }
+      })
+      .catch(function (resposta) {
+        console.log(`#ERRO: ${resposta}`);
+        finalizarAguardar();
+      });
+
+    return false;
+  }
 
     var rolagemTotal = 0;   
     var porcentagemCriticos = 0;
@@ -184,14 +401,22 @@
 
     function plotarGraficoUltimosResultados(){
         const ctx = document.getElementById('ultimosResultados');
+        let datas = [];
+        let resultados = [];
 
+        for(let i =0; i< ultimas_rolagens.length; i++){
+            let data = new Date(ultimas_rolagens[i].dtRolagem);
+            datas.push(data.toLocaleString("pt-BR", {dateStyle: "short", timeStyle: "short"}));
+            resultados.push(ultimas_rolagens[i].resultadoFinal);
+        }
+        
         new Chart(ctx, {
             type: 'line',
             data: {
-            labels: [ultimas_rolagens[0].dtRolagem, ultimas_rolagens[1].dtRolagem, ultimas_rolagens[2].dtRolagem, ultimas_rolagens[3].dtRolagem, ultimas_rolagens[4].dtRolagem],
+            labels: datas,
             datasets: [{
                 label: '# of Votes',
-                data: [ultimas_rolagens[0].resultadoFinal, ultimas_rolagens[1].resultadoFinal, ultimas_rolagens[2].resultadoFinal, ultimas_rolagens[3].resultadoFinal, ultimas_rolagens[4].resultadoFinal],
+                data: resultados,
                 borderWidth: 1,
                 backgroundColor: '#648767',
                 borderColor: "#4AAD52"

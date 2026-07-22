@@ -112,7 +112,8 @@ function inserirResultado(){
             idUsuario: sessionStorage.ID_USUARIO,
             resultadoNatural: (sessionStorage.ULTIMA_ROLAGEM - sessionStorage.BONUS),
             resultadoFinal: sessionStorage.ULTIMA_ROLAGEM,
-            tipoDado: sessionStorage.TIPODADO
+            tipoDado: sessionStorage.TIPODADO,
+            tipoRolagem: sessionStorage.TIPOROLAGEM
         })
         }).then(resposta => {
             if(resposta.ok){
@@ -134,7 +135,8 @@ function inserirResultadoSoma(){
             idUsuario: sessionStorage.ID_USUARIO,
             resultadoNatural: resultados[i],
             resultadoFinal: sessionStorage.ULTIMA_ROLAGEM,
-            tipoDado: sessionStorage.TIPODADO
+            tipoDado: sessionStorage.TIPODADO,
+            tipoRolagem: sessionStorage.TIPOROLAGEM
         })
         }).then(resposta => {
             if(resposta.ok){

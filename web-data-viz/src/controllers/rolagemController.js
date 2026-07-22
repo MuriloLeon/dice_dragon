@@ -50,8 +50,9 @@ function inserirResultado(req, res){
   var resultadoNatural = req.body.resultadoNatural;
   var resultadoFinal = req.body.resultadoFinal;
   var tipoDado = req.body.tipoDado;
+  var tipoRolagem = req.body.tipoRolagem
 
-  rolagemModel.inserirResultado(idUsuario, resultadoNatural, resultadoFinal, tipoDado).then(function(resposta){
+  rolagemModel.inserirResultado(idUsuario, resultadoNatural, resultadoFinal, tipoDado, tipoRolagem).then(function(resposta){
       res.status(200).send("Resultados inseridos com sucesso!");
   }).catch(function(erro){
       res.status(500).json(erro.sqlMessage);

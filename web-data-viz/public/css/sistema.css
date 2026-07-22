@@ -149,6 +149,21 @@
   display: none;
 }
 
+.pop-upB{
+  background-color: #701DD5;
+  border: 4px solid #0D1A2F;
+  flex-direction: column;
+  box-shadow: 8px 8px 0px #0D1A2F;
+  position: absolute;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 20%;
+  left: 40%;
+  display: none;
+}
+
 .resultado{
   color: white;
   width: 500px;

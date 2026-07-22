@@ -30,7 +30,7 @@
           <a href="dashboard.html">Dashboard</a>
         </li>
       </ul>
-      <button class="button_login" onclick="abrirLogin()">Login</button>
+      <button class="button_login" onclick="abrirLogin()" id="login">Login</button>
     </div>
   </div>
 
@@ -60,7 +60,9 @@
         </div>
         <div class="box">
           <h4>Sobre mim</h4>
-          <p></p>
+          <p>Eu tenho muito carinho por RPG, por isso fiz esse projeto para jogadores de de D&D. RPG me ajudou a conquistar novas amizades e a vencer minha timidez. Além disso, fiz esse projeto
+            para desenvolvimento tecnico.
+          </p>
         </div>
       </div>
     </div>
@@ -139,6 +141,7 @@
 </body>
 </html>
 <script>
+  window.onload = botao_entrar();
   function abrirLogin() {
     cardLogin.style.display = "flex";
   }

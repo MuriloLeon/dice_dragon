@@ -29,8 +29,8 @@ function excluirPersonagem(idUsuario, idPersonagem){
     return database.executar(instrucaoSql);
 }
 
-function inserirResultado(idUsuario, resultadoNatural, resultadoFinal, tipoDado){
-    var instrucaoSql = `INSERT INTO resultados (resultadoDado, resultadoFinal, tipoDado, fk_usuario) values (${resultadoNatural}, ${resultadoFinal}, "${tipoDado}", ${idUsuario});`;
+function inserirResultado(idUsuario, resultadoNatural, resultadoFinal, tipoDado, tipoRolagem){
+    var instrucaoSql = `INSERT INTO resultados (resultadoDado, resultadoFinal, tipoDado, tipoRolagem,fk_usuario) values (${resultadoNatural}, ${resultadoFinal}, "${tipoDado}", "${tipoRolagem}",${idUsuario});`;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);

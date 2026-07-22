@@ -33,7 +33,7 @@ create table rolagem_definida (
     primary key(id, fk_personagem),
     FOREIGN KEY (fk_personagem) REFERENCES personagem(id)
 );	
-drop table rolagem;
+
 create table rolagem (
 	id INT AUTO_INCREMENT,
 	categoria VARCHAR(45),
@@ -46,15 +46,12 @@ create table rolagem (
     foreign key (fk_rolagem) references rolagem_definida(id)
 );
 
-SELECT r.categoria, r.quantidade, r.tipoDado, r.bonus, r.tipoRolagem FROM rolagem r
-JOIN rolagem_definida rd ON rd.id = r.fk_rolagem
-WHERE rd.fk_personagem = 1 AND r.fk_rolagem = 1;
-
 create table resultados (
 	id INT PRIMARY KEY auto_increment,
     resultadoDado INT,
     resultadoFinal INT,
     tipoDado VARCHAR(45),
+    tipoRolagem Varchar(45),
     dtRolagem datetime default current_timestamp,
 	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
