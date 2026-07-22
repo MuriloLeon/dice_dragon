@@ -57,7 +57,7 @@
             <p id="ultima_rolagem"></p>
     </div>
     <div class="area">
-            <h1>Rolagens Pré-definidas</h1>
+            <h1 id="titulo">Rolagens Pré-definidas</h1>
             <button class="button adicionar" onclick="abrirPopUpCriar()">Adicionar Rolagem</button>
         <div class="area_cards" id="div_area_cards">
         </div>
@@ -360,6 +360,7 @@
 
     // VISUALIZAÇÃO DAS ROLAGENS
     function verRolagemPersonagem() {
+        document.getElementById("titulo").innerHTML = sessionStorage.NOME_PERSONAGEM_ATUAL;
         fetch(`/rolagens/verRolagemPersonagem/${sessionStorage.ID_PERSONAGEM_ATUAL}`, {
             method: "GET"
         })

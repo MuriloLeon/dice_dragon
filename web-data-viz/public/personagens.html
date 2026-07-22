@@ -57,7 +57,7 @@
             <p id="ultima_rolagem"></p>
     </div>
     <div class="area">
-            <h1>Rolagens Pré-definidas</h1>
+            <h1>Personagens</h1>
             <button class="button adicionar" onclick="adicionarGrupo()">Adicionar Personagem</button>
         <div class="area_cards" id="div_area_cards">
         </div>
@@ -336,7 +336,7 @@
                 <div class="card_sistema personagem">
                 <p>${item.nome}</p>
                 <div class="opcoes">
-                    <button class="button btn_perso" onclick='acessarPersonagem(${item.id})'>Acessar</button>
+                    <button class="button btn_perso" onclick='acessarPersonagem(${item.id}, "${item.nome}")'>Acessar</button>
                     <button class="button btn_perso" onclick='editarPersonagem(${item.id})'>Editar</button>
                     <button class="button btn_perso" onclick='excluirPersonagemRolagem(${item.id})'>Excluir</button>
                 </div>
@@ -424,8 +424,10 @@
         })
     }
 
-    function acessarPersonagem(idPersonagem){
+    function acessarPersonagem(idPersonagem, nomePersonagem){
+        console.log('Person')
         sessionStorage.ID_PERSONAGEM_ATUAL = idPersonagem;
+        sessionStorage.NOME_PERSONAGEM_ATUAL = nomePersonagem;
         window.location.href='rolagens_personagem.html';
     }
 
